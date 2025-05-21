@@ -1,0 +1,12 @@
+[
+  { "userid": "u001", "name": "Alice", "email": "alice@example.com", "username": "alice01", "createdAt": "2025-05-01T09:00:00Z" },
+  { "userid": "u002", "name": "Bob", "email": "bob@example.com", "username": "bobby", "createdAt": "2025-05-02T10:30:00Z" },
+  { "userid": "u003", "name": "Charlie", "email": "charlie@example.com", "username": "charlieC", "createdAt": "2025-05-03T11:00:00Z" },
+  { "userid": "u004", "name": "David", "email": "david@example.com", "username": "dave", "createdAt": "2025-05-04T12:00:00Z" },
+  { "userid": "u005", "name": "Eva", "email": "eva@example.com", "username": "eva_05", "createdAt": "2025-05-05T14:20:00Z" },
+  { "userid": "u006", "name": "Frank", "email": "frank@example.com", "username": "franky", "createdAt": "2025-05-06T08:45:00Z" },
+  { "userid": "u007", "name": "Grace", "email": "grace@example.com", "username": "grace_g", "createdAt": "2025-05-07T16:10:00Z" },
+  { "userid": "u008", "name": "Henry", "email": "henry@example.com", "username": "hen123", "createdAt": "2025-05-08T07:55:00Z" },
+  { "userid": "u009", "name": "Isla", "email": "isla@example.com", "username": "isla_i", "createdAt": "2025-05-09T09:30:00Z" },
+  { "userid": "u010", "name": "Jack", "email": "jack@example.com", "username": "jackie", "createdAt": "2025-05-10T10:00:00Z" }
+]

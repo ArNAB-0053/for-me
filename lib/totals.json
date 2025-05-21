@@ -1,0 +1,12 @@
+[
+  { "userid": "u001", "investedMoney": 5000, "currentMoney": 4300 },
+  { "userid": "u002", "investedMoney": 4000, "currentMoney": 4300 },
+  { "userid": "u003", "investedMoney": 2000, "currentMoney": -1500 },
+  { "userid": "u004", "investedMoney": 6000, "currentMoney": 7000 },
+  { "userid": "u005", "investedMoney": 1500, "currentMoney": -900 },
+  { "userid": "u006", "investedMoney": 4000, "currentMoney": 3000 },
+  { "userid": "u007", "investedMoney": 1000, "currentMoney": -1200 },
+  { "userid": "u008", "investedMoney": 2500, "currentMoney": 2000 },
+  { "userid": "u009", "investedMoney": 1000, "currentMoney": 0 },
+  { "userid": "u010", "investedMoney": 500, "currentMoney": 0 }
+]
