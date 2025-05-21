@@ -34,7 +34,7 @@ const CardContainer = ({
       <Card
         className={`order-${order2} lg:order-${order1} relative overflow-hidden bg-card/60 border shadow-md hover:shadow-lg transition`}
       >
-        <div className="absolute right-0 bg-background/70 top-0 h-full w-1/2 lg:w-1/3 p-5 flex items-center justify-center opacity-20 pointer-events-none">
+        <div className="absolute right-0 border-l border-foreground/40 dark:bg-background/70 top-0 h-full w-1/2 lg:w-1/3 p-5 flex items-center justify-center opacity-20 pointer-events-none">
           <Icon className="w-full h-[80%] text-primary scale-x-[-1]" />
         </div>
         <CardHeader>
