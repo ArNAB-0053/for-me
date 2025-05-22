@@ -1,7 +1,6 @@
+"use client";
 
-"use client"
-
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   SortingState,
@@ -12,13 +11,8 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import {
-  IconFilter,
-  IconSearch,
-  IconX,
-  IconClock,
-} from "@tabler/icons-react"
+} from "@tanstack/react-table";
+import { IconFilter, IconSearch, IconX, IconClock } from "@tabler/icons-react";
 import {
   CheckCircle2Icon,
   ChevronDownIcon,
@@ -28,13 +22,13 @@ import {
   ChevronsRightIcon,
   ColumnsIcon,
   MoreVerticalIcon,
-} from "lucide-react"
-import { format } from "date-fns"
-import { DateRange } from "react-day-picker"
-import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "lucide-react";
+import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -42,21 +36,21 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -64,10 +58,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
-import { Separator } from "@radix-ui/react-dropdown-menu"
+} from "@/components/ui/table";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { Separator } from "@radix-ui/react-dropdown-menu";
 
 // Custom DateRangePicker component
 function DateRangePicker({
@@ -75,15 +69,15 @@ function DateRangePicker({
   onSelect,
   className,
 }: {
-  selected?: DateRange
-  onSelect?: (range: DateRange | undefined) => void
-  className?: string
+  selected?: DateRange;
+  onSelect?: (range: DateRange | undefined) => void;
+  className?: string;
 }) {
-  const [date, setDate] = React.useState<DateRange | undefined>(selected)
+  const [date, setDate] = React.useState<DateRange | undefined>(selected);
 
   React.useEffect(() => {
-    onSelect?.(date)
-  }, [date, onSelect])
+    onSelect?.(date);
+  }, [date, onSelect]);
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -101,7 +95,8 @@ function DateRangePicker({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
+                  {format(date.from, "LLL dd, y")} -{" "}
+                  {format(date.to, "LLL dd, y")}
                 </>
               ) : (
                 format(date.from, "LLL dd, y")
@@ -123,21 +118,21 @@ function DateRangePicker({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }
 
 interface Transaction {
-  userid: string
-  type: "credit" | "debit"
-  amount: number
-  reason: string
-  category: string
-  givenToSomeone: boolean
-  personName: string
-  isPending: boolean
-  date: string
-  time: string
-  thoughts: string
+  userid: string;
+  type: "credit" | "debit";
+  amount: number;
+  reason: string;
+  category: string;
+  givenToSomeone: boolean;
+  personName: string;
+  isPending: boolean;
+  date: string;
+  time: string;
+  thoughts: string;
 }
 
 const columns: ColumnDef<Transaction>[] = [
@@ -177,13 +172,16 @@ const columns: ColumnDef<Transaction>[] = [
       </div>
     ),
     sortingFn: (rowA, rowB) =>
-      new Date(rowB.original.date).getTime() - new Date(rowA.original.date).getTime(),
+      new Date(rowB.original.date).getTime() -
+      new Date(rowA.original.date).getTime(),
   },
   {
     accessorKey: "type",
     header: "Type",
     cell: ({ row }) => (
-      <Badge variant={row.original.type === "credit" ? "success" : "destructive"}>
+      <Badge
+        variant={row.original.type === "credit" ? "success" : "destructive"}
+      >
         {row.original.type.toUpperCase()}
       </Badge>
     ),
@@ -255,54 +253,72 @@ const columns: ColumnDef<Transaction>[] = [
       </DropdownMenu>
     ),
   },
-]
+];
 
-export function TransactionsTable({ data: initialData }: { data: Transaction[] }) {
+export function TransactionsTable({
+  data: initialData,
+  onlyTable = false,
+}: {
+  data: Transaction[];
+  onlyTable?: boolean;
+}) {
   const [data] = React.useState(() =>
-    initialData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  )
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+    initialData.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
+  );
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "date", desc: true }, // Default: newest to oldest
-  ])
-  const [searchTerm, setSearchTerm] = React.useState("")
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>()
-  const [transactionType, setTransactionType] = React.useState<string>("all")
-  const [showLoansOnly, setShowLoansOnly] = React.useState(false)
-  const [showPendingOnly, setShowPendingOnly] = React.useState(false)
+  ]);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
+  const [transactionType, setTransactionType] = React.useState<string>("all");
+  const [showLoansOnly, setShowLoansOnly] = React.useState(false);
+  const [showPendingOnly, setShowPendingOnly] = React.useState(false);
 
   const filteredData = React.useMemo(() => {
     return data.filter((transaction) => {
       if (dateRange?.from && dateRange?.to) {
-        const transactionDate = new Date(transaction.date)
+        const transactionDate = new Date(transaction.date);
         if (
           transactionDate < dateRange.from ||
           transactionDate > dateRange.to
         ) {
-          return false
+          return false;
         }
       }
       if (
         searchTerm &&
         !transaction.reason.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !transaction.thoughts.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !transaction.thoughts
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) &&
         !transaction.personName.toLowerCase().includes(searchTerm.toLowerCase())
       ) {
-        return false
+        return false;
       }
       if (transactionType !== "all" && transaction.type !== transactionType) {
-        return false
+        return false;
       }
       if (showLoansOnly && transaction.category !== "Loan") {
-        return false
+        return false;
       }
       if (showLoansOnly && showPendingOnly && !transaction.isPending) {
-        return false
+        return false;
       }
-      return true
-    })
-  }, [data, searchTerm, dateRange, transactionType, showLoansOnly, showPendingOnly])
+      return true;
+    });
+  }, [
+    data,
+    searchTerm,
+    dateRange,
+    transactionType,
+    showLoansOnly,
+    showPendingOnly,
+  ]);
 
   const table = useReactTable({
     data: filteredData,
@@ -321,11 +337,16 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-  })
+  });
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div
+        className={cn(
+          "flex flex-col gap-4 md:flex-row md:items-center md:justify-between",
+          onlyTable && "hidden"
+        )}
+      >
         <div className="relative w-full md:w-64">
           <IconSearch className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
           <Input
@@ -405,15 +426,15 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
                   variant="destructive"
                   size="sm"
                   onClick={() => {
-                    setSearchTerm("")
-                    setDateRange(undefined)
-                    setTransactionType("all")
-                    setShowLoansOnly(false)
-                    setShowPendingOnly(false)
-                    setColumnVisibility({})
-                    setSorting([{ id: "date", desc: true }])
-                    setRowSelection({})
-                    table.setPageIndex(0)
+                    setSearchTerm("");
+                    setDateRange(undefined);
+                    setTransactionType("all");
+                    setShowLoansOnly(false);
+                    setShowPendingOnly(false);
+                    setColumnVisibility({});
+                    setSorting([{ id: "date", desc: true }]);
+                    setRowSelection({});
+                    table.setPageIndex(0);
                   }}
                 >
                   Reset Filters
@@ -438,12 +459,14 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
                   <DropdownMenuCheckboxItem
                     key={column.id}
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {(column.columnDef.header as string !== "" || column.columnDef.header as string !== null) 
-                      ? column.columnDef.header as string
-                      : "..."
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
                     }
+                  >
+                    {(column.columnDef.header as string) !== "" ||
+                    (column.columnDef.header as string) !== null
+                      ? (column.columnDef.header as string)
+                      : "..."}
                   </DropdownMenuCheckboxItem>
                 ))}
             </DropdownMenuContent>
@@ -451,7 +474,12 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div
+        className={cn(
+          "flex items-center justify-between",
+          onlyTable && "hidden"
+        )}
+      >
         <div className="text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected
@@ -460,7 +488,7 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value))
+              table.setPageSize(Number(value));
             }}
           >
             <SelectTrigger className="w-20">
@@ -498,11 +526,14 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                      {header.column.id === "date" &&
+                      {(header.column.id === "date" &&
                         {
                           asc: <ChevronDownIcon className="h-4 w-4" />,
-                          desc: <ChevronDownIcon className="h-4 w-4 rotate-180" />,
-                        }[header.column.getIsSorted() as string] ?? null}
+                          desc: (
+                            <ChevronDownIcon className="h-4 w-4 rotate-180" />
+                          ),
+                        }[header.column.getIsSorted() as string]) ??
+                        null}
                     </div>
                   </TableHead>
                 ))}
@@ -518,14 +549,20 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No transactions found.
                 </TableCell>
               </TableRow>
@@ -536,7 +573,8 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
 
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}
         </div>
         <div className="flex gap-2">
           <Button
@@ -582,5 +620,5 @@ export function TransactionsTable({ data: initialData }: { data: Transaction[] }
         </div>
       </div>
     </div>
-  )
+  );
 }

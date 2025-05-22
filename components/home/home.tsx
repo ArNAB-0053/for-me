@@ -7,6 +7,7 @@ import Hero from "./hero";
 import { FaWallet } from "react-icons/fa";
 import { IoBarChart } from "react-icons/io5";
 import { IconType } from "react-icons";
+import { cn } from "@/lib/utils";
 
 interface CardContainerProps {
   cardTitle: string;
@@ -14,8 +15,7 @@ interface CardContainerProps {
   title: string;
   description: string;
   icon: IconType;
-  order1: number;
-  order2: number;
+  reverseOrder?: boolean;
   btnText: string;
 }
 
@@ -25,14 +25,15 @@ const CardContainer = ({
   title,
   description,
   icon: Icon,
-  order1 = 1,
-  order2 = 2,
+  reverseOrder = false,
   btnText,
 }: CardContainerProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-12 w-full">
       <Card
-        className={`order-${order2} lg:order-${order1} relative overflow-hidden bg-card/60 border shadow-md hover:shadow-lg transition`}
+        className={cn(" relative overflow-hidden order-2 bg-card/60 border shadow-md hover:shadow-lg transition", 
+          reverseOrder ? "lg:order-2" :"lg:order-1"
+        )}
       >
         <div className="absolute right-0 border-l border-foreground/40 dark:bg-background/70 top-0 h-full w-1/2 lg:w-1/3 p-5 flex items-center justify-center opacity-20 pointer-events-none">
           <Icon className="w-full h-[80%] text-primary scale-x-[-1]" />
@@ -53,7 +54,9 @@ const CardContainer = ({
       </Card>
 
       <div
-        className={`order-${order1} lg:order-${order2} flex flex-col justify-center`}
+        className={cn("flex flex-col justify-center order-1",
+          reverseOrder ? "lg:order-1" :"lg:order-2"
+        )}
       >
         <h2 className="text-2xl font-semibold mb-2">{title}</h2>
         <p className="text-muted-foreground">{description}</p>
@@ -76,8 +79,6 @@ export default function HomePage() {
           cardDescription="Quickly log your income or expenses with category, date, and amount."
           title="Simple Expense Logging"
           description="Stay on top of your finances by logging every income or expense entry with a few clicks. Categorize easily, add notes, and track patterns."
-          order1={1}
-          order2={2}
           btnText="Add Entry"
         />
 
@@ -87,8 +88,7 @@ export default function HomePage() {
           cardDescription="Browse your finances month by month with visual breakdowns."
           title="Visual Financial Reports"
           description="Get a monthly breakdown of your income and expenses. Our intuitive charts help you understand spending habits and save more effectively."
-          order1={2}
-          order2={1}
+          reverseOrder
           btnText="View Reports"
         />
       </section>
