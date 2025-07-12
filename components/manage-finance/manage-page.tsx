@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,14 +8,25 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import totals from "@/lib/totals.json";
 import FinanceForm from "./finance-form";
-import { toast } from "sonner";
+import { TransactionsTable } from "../sidebar/data-table";
+import { ExternalLink } from "lucide-react";
 
 // Updated to match FinanceForm's Transaction interface
 interface Transaction {
@@ -38,6 +49,12 @@ interface InvestmentData {
   currentMoney: number;
 }
 
+interface InvestmentTransactionPageProps {
+  transactions: TransactionFormData[];
+  onSubmitTransaction: (data: TransactionFormData) => void;
+  onSubmitInitialInvestment: (amount: number) => void;
+}
+
 const categories = [
   "Income",
   "Housing",
@@ -49,8 +66,9 @@ const categories = [
   "Other",
 ];
 
-const currentUserId = "r1fs7b70-5r1b-4e34-bc94-5w61837c9b2e";
+const currentUserId = "u001";
 
+<<<<<<< HEAD
 export function InvestmentTransactionPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [userData, setUserData] = useState<InvestmentData>({
@@ -77,11 +95,28 @@ export function InvestmentTransactionPage() {
   }, []);
 
   const handleInitialInvestmentSubmit = async (e: React.FormEvent) => {
+=======
+export function InvestmentTransactionPage({
+  transactions,
+  onSubmitTransaction,
+  onSubmitInitialInvestment,
+}: InvestmentTransactionPageProps) {
+  const userTransactions = transactions.filter(
+    (transaction) => transaction.userid === currentUserId
+  );
+  const userData = totals.find(
+    (data: InvestmentData) => data.userid === currentUserId
+  ) || { investedMoney: 0, currentMoney: 0 };
+  const [initialInvestment, setInitialInvestment] = useState<number>(0);
+
+  const handleInitialInvestmentSubmit = (e: React.FormEvent) => {
+>>>>>>> 48557558feb37b645ee6632f4fbc320052037ecd
     e.preventDefault();
-    if (initialInvestment <= 0) {
-      toast.error("Please enter a valid investment amount");
-      return;
+    if (initialInvestment > 0) {
+      onSubmitInitialInvestment(initialInvestment);
+      setInitialInvestment(0);
     }
+<<<<<<< HEAD
 
     const promise = new Promise(async (resolve, reject) => {
       try {
@@ -170,6 +205,8 @@ export function InvestmentTransactionPage() {
       },
       error: (err) => `Error: ${err.message}`,
     });
+=======
+>>>>>>> 48557558feb37b645ee6632f4fbc320052037ecd
   };
 
   return (
@@ -177,7 +214,7 @@ export function InvestmentTransactionPage() {
       {/* Registered Amount Card or Initial Investment Input */}
       {userData.investedMoney > 0 ? (
         <div className="w-full flex items-start justify-between gap-x-6">
-          <Card className="w-1/2 max-lg:w-full">
+          <Card className="w-1/2">
             <CardHeader>
               <CardDescription>Registered Amount</CardDescription>
               <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
@@ -188,16 +225,30 @@ export function InvestmentTransactionPage() {
               <div className="line-clamp-1 flex gap-2 font-medium">
                 Current Balance: ${userData.currentMoney.toFixed(2)}
                 {userData.currentMoney >= userData.investedMoney ? (
-                  <IconTrendingUp className="size-4 text-green-600" />
+                  <IconTrendingUp className="size-4" />
                 ) : (
-                  <IconTrendingDown className="size-4 text-red-600" />
+                  <IconTrendingDown className="size-4" />
                 )}
               </div>
               <div className="text-muted-foreground">
-                {transactions.length} transactions recorded
+                {userTransactions.length} transactions recorded
               </div>
             </CardFooter>
           </Card>
+
+          <div className="flex-1 relative overflow-hidden rounded-lg border h-44">
+            <TransactionsTable data={transactions} onlyTable />
+
+            <div className="w-full h-full absolute bg-black/40 backdrop-blur-[2px] z-40 left-0 top-0"></div>
+
+            <div className="absolute z-40 left-1/2 top-1/2 -translate-x-1/2 flex items-center justify-center flex-col gap-y-2">
+              <p>View the transaction record</p>
+              <Button className="w-fit bg-secondary border  hover:bg-secondary/80">
+                View
+                <ExternalLink />
+              </Button>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="w-full flex">
@@ -233,11 +284,34 @@ export function InvestmentTransactionPage() {
       )}
 
       <FinanceForm
+<<<<<<< HEAD
         userTransactions={transactions}
         onSubmitTransaction={handleTransactionSubmit}
+=======
+        handleInputChange={handleInputChange}
+        userTransactions={userTransactions}
+        onSubmitTransaction={onSubmitTransaction}
+>>>>>>> 48557558feb37b645ee6632f4fbc320052037ecd
         currentUserId={currentUserId}
         categories={categories}
       />
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+
+  function handleInputChange(
+    field: keyof TransactionFormData,
+    value: string | number | boolean
+  ) {
+    // Update the first transaction or create a new one
+    const updatedTransaction = {
+      ...userTransactions[0],
+      [field]: value,
+      userid: currentUserId,
+    };
+    onSubmitTransaction(updatedTransaction);
+  }
+}
+>>>>>>> 48557558feb37b645ee6632f4fbc320052037ecd
