@@ -17,18 +17,19 @@ import { Badge } from "@/components/ui/badge";
 import FinanceForm from "./finance-form";
 import { toast } from "sonner";
 
-interface TransactionFormData {
+// Updated to match FinanceForm's Transaction interface
+interface Transaction {
+  type?: "credit" | "debit";
+  amount?: number;
+  reason?: string;
+  category?: string;
+  date?: string;
+  time?: string;
+  givenToSomeone?: boolean;
+  personName?: string;
+  isPending?: boolean;
+  thoughts?: string;
   userid?: string;
-  type: "credit" | "debit";
-  amount: number;
-  reason: string;
-  category: string;
-  givenToSomeone: boolean;
-  personName: string;
-  isPending: boolean;
-  date: string;
-  time: string;
-  thoughts: string;
 }
 
 interface InvestmentData {
@@ -51,7 +52,7 @@ const categories = [
 const currentUserId = "r1fs7b70-5r1b-4e34-bc94-5w61837c9b2e";
 
 export function InvestmentTransactionPage() {
-  const [transactions, setTransactions] = useState<TransactionFormData[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [userData, setUserData] = useState<InvestmentData>({
     userid: currentUserId,
     investedMoney: 0,
@@ -63,11 +64,11 @@ export function InvestmentTransactionPage() {
     const fetchData = async () => {
       try {
         const [transactionsRes, totalsRes] = await Promise.all([
-          fetch("/api/transactions").then((res) => res.json()),
-          fetch("/api/totals").then((res) => res.json()),
+          fetch(`/api/transactions/${currentUserId}`).then((res) => res.json()),
+          fetch(`/api/totals/${currentUserId}`).then((res) => res.json()),
         ]);
         setTransactions(transactionsRes.data || []);
-        setUserData(totalsRes.data || { investedMoney: 0, currentMoney: 0 });
+        setUserData(totalsRes.data || { userid: currentUserId, investedMoney: 0, currentMoney: 0 });
       } catch (err) {
         toast.error("Failed to fetch data");
       }
@@ -115,13 +116,39 @@ export function InvestmentTransactionPage() {
     });
   };
 
-  const handleTransactionSubmit = async (transaction: TransactionFormData) => {
+  const handleTransactionSubmit = async (transaction: Transaction) => {
+    // Validate required fields
+    if (!transaction.type) {
+      toast.error("Transaction type is required");
+      return;
+    }
+    
+    if (!transaction.amount || transaction.amount <= 0) {
+      toast.error("Transaction amount must be greater than 0");
+      return;
+    }
+
+    // Convert Transaction to the format expected by the API
+    const transactionData = {
+      userid: currentUserId,
+      type: transaction.type,
+      amount: transaction.amount,
+      reason: transaction.reason || "",
+      category: transaction.category || "Other",
+      date: transaction.date || new Date().toISOString().split('T')[0],
+      time: transaction.time || new Date().toTimeString().split(' ')[0],
+      givenToSomeone: transaction.givenToSomeone || false,
+      personName: transaction.personName || "",
+      isPending: transaction.isPending || false,
+      thoughts: transaction.thoughts || "",
+    };
+
     const promise = new Promise(async (resolve, reject) => {
       try {
         const res = await fetch("/api/transactions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(transaction),
+          body: JSON.stringify(transactionData),
         });
         const data = await res.json();
         if (data.success) {
@@ -138,7 +165,7 @@ export function InvestmentTransactionPage() {
       loading: "Adding transaction...",
       success: (data: any) => {
         setUserData(data.newTotals);
-        setTransactions((prev) => [...prev, transaction]);
+        setTransactions((prev) => [...prev, transactionData]);
         return "Transaction added successfully";
       },
       error: (err) => `Error: ${err.message}`,
@@ -206,7 +233,6 @@ export function InvestmentTransactionPage() {
       )}
 
       <FinanceForm
-        handleInputChange={handleInputChange}
         userTransactions={transactions}
         onSubmitTransaction={handleTransactionSubmit}
         currentUserId={currentUserId}
@@ -214,20 +240,4 @@ export function InvestmentTransactionPage() {
       />
     </div>
   );
-
-  function handleInputChange(
-    field: keyof TransactionFormData,
-    value: string | number | boolean
-  ) {
-    const updatedTransaction = {
-      ...transactions[transactions.length - 1],
-      [field]: value,
-      userid: currentUserId,
-    };
-    setTransactions((prev) => {
-      const updated = [...prev];
-      updated[updated.length - 1] = updatedTransaction;
-      return updated;
-    });
-  }
 }

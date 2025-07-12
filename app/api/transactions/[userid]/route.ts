@@ -31,9 +31,12 @@ const headerMap: Record<string, string> = {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { userid: string } }
+  { params }: { params: Promise<{ userid: string }> }
 ) {
   try {
+    // Await the params Promise
+    const { userid } = await params;
+    
     const sheets = getGoogleSheetsClient();
     const sheetId = process.env.TRANSACTION_SHEET_ID;
 
@@ -65,7 +68,7 @@ export async function GET(
     });
 
     const userTransactions = transactions.filter(
-      (transaction) => transaction.userid === params.userid
+      (transaction) => transaction.userid === userid
     );
 
     return NextResponse.json({ success: true, data: userTransactions });

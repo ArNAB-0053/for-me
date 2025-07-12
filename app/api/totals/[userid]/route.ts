@@ -15,30 +15,35 @@ function getGoogleSheetsClient() {
   return google.sheets({ version: 'v4', auth });
 }
 
-export async function GET(req: NextRequest, { params }: { params: { userid: string } }) {
+export async function GET(
+  req: NextRequest, 
+  { params }: { params: Promise<{ userid: string }> }
+) {
   try {
+    // Await the params Promise
+    const { userid } = await params;
+    
     const sheets = getGoogleSheetsClient();
     const totalsSheetId = process.env.TOTALS_SHEET_ID;
-
+    
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: totalsSheetId,
       range: `${SHEET_NAME_TOTALS}!A2:C`,
     });
-
+    
     const values = response.data.values || [];
-
-    const userRow = values.find(([id]) => id === params.userid);
-
+    const userRow = values.find(([id]) => id === userid);
+    
     if (!userRow) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
-
-    const [userid, investedMoney, currentMoney] = userRow;
-
+    
+    const [userIdFromSheet, investedMoney, currentMoney] = userRow;
+    
     return NextResponse.json({
       success: true,
       data: {
-        userid,
+        userid: userIdFromSheet,
         investedMoney: parseFloat(investedMoney),
         currentMoney: parseFloat(currentMoney),
       },

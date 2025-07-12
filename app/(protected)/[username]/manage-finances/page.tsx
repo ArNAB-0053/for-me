@@ -1,8 +1,6 @@
 "use client"
 import React from "react";
 
-import data from "@/lib/finance.json";
-import totals from "@/lib/totals.json";
 import { InvestmentTransactionPage } from "@/components/manage-finance/manage-page";
 
 const page = () => {
